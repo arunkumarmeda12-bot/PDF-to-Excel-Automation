@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>EOB Automation</title>
+
+  <style>
+
+    body{
+      font-family: Arial;
+      background:#f3f4f6;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+
+    .card{
+      background:white;
+      padding:40px;
+      width:400px;
+      border-radius:10px;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+      text-align:center;
+    }
+
+    h2{
+      color:#2563eb;
+    }
+
+    input{
+      margin-top:20px;
+    }
+
+    button{
+      margin-top:20px;
+      padding:12px 20px;
+      border:none;
+      background:#2563eb;
+      color:white;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    button:hover{
+      background:#1e40af;
+    }
+
+    #status{
+      margin-top:20px;
+      color:green;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+  <h2>EOB PDF Automation</h2>
+
+  <input type="file" id="pdfFile">
+
+  <br>
+
+  <button onclick="uploadPDF()">
+    Process PDF
+  </button>
+
+  <div id="status"></div>
+
+</div>
+
+<script>
+
+async function uploadPDF(){
+
+  const fileInput =
+    document.getElementById("pdfFile");
+
+  const file =
+    fileInput.files[0];
+
+  if(!file){
+
+    alert("Please select PDF");
+
+    return;
+  }
+
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  document.getElementById("status").innerHTML =
+    "Processing PDF...";
+
+  try{
+
+    const response = await fetch(
+      "http://localhost:5678/webhook/upload-eob",
+      {
+        method:"POST",
+        body:formData
+      }
+    );
+
+    const result = await response.json();
+
+    console.log(result);
+
+    document.getElementById("status").innerHTML =
+      "PDF Processed Successfully";
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    document.getElementById("status").innerHTML =
+      "Error Processing PDF";
+
+  }
+
+}
+
+</script>
+
+</body>
+
+</html>
